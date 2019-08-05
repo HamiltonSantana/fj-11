@@ -1,6 +1,6 @@
 package br.com.caelum.contas.modelo;
 
-public abstract class Conta {
+public abstract class Conta implements Comparable<Conta> {
     protected double saldo;
     private int numero;
     private String titular;
@@ -63,7 +63,13 @@ public abstract class Conta {
         else System.out.println ("Operaocao nao realizada");
     }
     public void deposita(double valor){
-        this.saldo += valor;
+        if(valor < 0){
+            throw new IllegalArgumentException("Voce tentou depositar "+
+                                                " um valor negativo");
+        }
+        else {
+            this.saldo += valor;
+        }
     }
     double getRendimento(){
         return this.saldo*0.1;
@@ -76,14 +82,34 @@ public abstract class Conta {
         dados += "\nRednimento: " + this.getRendimento();
         return dados;
     }
-    public String getTipo()
-    {
-        return "Conta";
-    }
+    public abstract String getTipo();
+
 
     public void transfere(double valor, Conta conta)
     {
         this.saca(valor);
         conta.deposita(valor);
+    }
+
+    @Override
+    public String toString() {
+        return "[titular="+ titular + ", numero="+numero
+                + ", agencia=" + agencia + "]";
+    }
+
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        Conta outraConta = (Conta) obj;
+
+        return this.numero == outraConta.numero &&
+            this.agencia.equals(outraConta.agencia);
+    }
+
+    public int compareTo(Conta outraConta)
+    {
+        return this.titular.compareTo(outraConta.titular);
     }
 }
